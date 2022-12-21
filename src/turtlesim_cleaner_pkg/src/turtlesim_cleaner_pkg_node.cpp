@@ -79,9 +79,9 @@ cout<<"input rotation direction 1 or 0 only";
 cin>>isclockwise;
 */
 turtlesim::Pose goal_pose;
-goal_pose.x=5;
-goal_pose.y=5;
-goal_pose.theta=0;
+goal_pose.x=1;
+goal_pose.y=1;
+goal_pose.theta=90;
 go_to_goal(goal_pose,0.01);
 //move(speed,distance,isForward); 
 //rotate(angular_velocity,angle,isclockwise); 
@@ -202,6 +202,12 @@ vel_msg.angular.z=0;
 velocity_publisher.publish(vel_msg);
 }
  
+
+
+
+
+
+
  
 /*while(ros::Time::now() - start_time < timeout) {
    while(ros::Time::now() - start_time < t1){
@@ -476,3 +482,82 @@ velocity_publisher.publish(vel_msg);
 
 */
 
+
+
+
+
+//code for turtlebot3 
+/*
+
+//Alhamdulillah successful moveit
+
+#include "ros/ros.h"
+#include "geometry_msgs/Twist.h"
+#include<iostream>
+using namespace std;
+//ros::Publisher velocity_publisher;
+//void move(double speed, double distance, bool isForward);
+
+int main(int argc, char **argv)
+{
+ double FORWARD_SPEED_MPS;
+ double angular_speed;
+ int i;
+// Initialize the node
+ros::init(argc, argv, "turtlebot3");
+ros::NodeHandle node;
+// A publisher for the movement data
+ros::Publisher velocity_publisher = node.advertise<geometry_msgs::Twist>("/cmd_vel", 10);//cmd_vel is the velocity command turtlebot3 only this has been changed from turtlesim to turtlebot3
+//please check same program for turtlesim to find out difference it is only cmd_vel has been changes only in publisher.
+// Drive forward at a given speed. The robot points up the x-axis.
+// The default constructor will set all commands to 0
+geometry_msgs::Twist vel_msg;
+
+double speed;
+double distance;
+bool isForward;
+
+ros::Time start_time = ros::Time::now();
+ros::Duration timeout(6.0); // Timeout of 2 seconds
+ros::Duration t1(2.0); 
+ros::Duration t2(4.0);
+
+
+
+
+cout<<"enter linear speed";
+cin>>speed;
+cout<<"enter distance vlaue";
+cin>>distance;
+cout<<"enter angular vel";
+cout<<"input direction 1 or 0 only";
+cin>>isForward;
+//double t0;
+//double t3;
+//double current_distance=0;
+//move(speed,distance,isForward);
+//velocity_publisher.publish(vel_msg);
+if(isForward)
+vel_msg.linear.x=abs(speed);
+
+else
+vel_msg.linear.x=-abs(speed);
+
+//ros::Time t0=ros::Time::now();
+double current_distance=0.0;
+ros::Rate loop_rate(100);
+double t0=ros::Time::now().toSec();
+do{
+    velocity_publisher.publish(vel_msg);
+    double t3=ros::Time::now().toSec();
+    current_distance=speed*(t3-t0);;
+    loop_rate.sleep();
+}while (current_distance<distance);
+vel_msg.linear.x=0;
+velocity_publisher.publish(vel_msg);
+
+
+}
+
+
+*/
