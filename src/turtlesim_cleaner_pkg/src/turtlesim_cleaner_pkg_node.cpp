@@ -79,8 +79,8 @@ cout<<"input rotation direction 1 or 0 only";
 cin>>isclockwise;
 */
 turtlesim::Pose goal_pose;
-goal_pose.x=1;
-goal_pose.y=1;
+goal_pose.x=5;
+goal_pose.y=5;
 goal_pose.theta=0;
 go_to_goal(goal_pose,0.01);
 //move(speed,distance,isForward); 
