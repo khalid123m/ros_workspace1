@@ -3,7 +3,7 @@
 #include "geometry_msgs/Twist.h"
 #include<iostream>
 #include "turtlesim/Pose.h"  //very important to declare to use poseCallback() function
-
+#include <math.h> 
 
 turtlesim::Pose t_pose;//v. IMP to declare and it is case sensitive
 void poseCallback(const turtlesim::PoseConstPtr& pose_message)
@@ -59,7 +59,7 @@ double angle;
 bool isclockwise;
 
  //double x_goal=10;
- //double y_goal=4;
+ double y_goal=4;
 
 
 //input values for linear movement for a specific distance in a specific direction
@@ -168,35 +168,38 @@ return angle_g;
 
 }
 
-void go_to_goal()
-//turtlesim::Pose goal_pose,double distance_tolerance
+void go_to_goal(turtlesim::Pose goal_pose,double distance_tolerance)
 {
 
 geometry_msgs::Twist vel_msg;
 ///ros::init(argc, argv, "move_turtle");
 //ros::NodeHandle node;
-//ros::NodeHandle node;
-//ros::Publisher velocity_publisher = node.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 10);
+ros::NodeHandle node;
+ros::Publisher velocity_publisher = node.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 10);
 ros::Rate loop_rate(100);
-
-//vel_msg.linear.x=1.5*eucl_distance(t_pose.x,t_pose.y,goal_pose.x,goal_pose.y);
-vel_msg.linear.x=1.5;
+do{
+vel_msg.linear.x=1.2*eucl_distance(t_pose.x,t_pose.y,goal_pose.x,goal_pose.y);
+//vel_msg.linear.x=1.5*sqrt(pow((goal_pose.x-t_pose.x),2)+pow((goal_pose.y-t_pose.y),2));
+//vel_msg.linear.x=1.5*eucl_distance(goal_pose.x,goal_pose.y,t_pose.x,t_pose.y);
+//vel_msg.linear.x=1.5;
 vel_msg.linear.y=0;
 vel_msg.linear.z=0;
 vel_msg.angular.x=0;
 vel_msg.angular.y=0;
 //vel_msg.angular.z=4*find_angle(t_pose.x,t_pose.y,goal_pose.x,goal_pose.y);
-vel_msg.angular.z=4;
-veloctiy_publisher.publish(vel_msg);
+vel_msg.angular.z=4*(atan2(goal_pose.y-t_pose.y,goal_pose.x-t_pose.x)-t_pose.theta);
+//vel_msg.angular.z=4;
+velocity_publisher.publish(vel_msg);
 ros::spinOnce();
 loop_rate.sleep();
-
+}while(eucl_distance(t_pose.x,t_pose.y,goal_pose.x,goal_pose.y)>distance_tolerance);
+//while((sqrt(pow((goal_pose.x-t_pose.x),2)+pow((goal_pose.y-t_pose.y),2))>distance_tolerance));
 //while(eucl_distance(t_pose.x,t_pose.y,goal_pose.x,goal_pose.y)>distance_tolerance);
-//cout<<"goal reached";
-//vel_msg.linear.x=0;
-//vel_msg.angular.z=0;
+cout<<"goal reached";
+vel_msg.linear.x=0;
+vel_msg.angular.z=0;
 
-//veloctiy_publisher.publish(vel_msg);
+velocity_publisher.publish(vel_msg);
 }
  
  
