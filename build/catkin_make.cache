@@ -1,0 +1,2 @@
+turtlesim_cleaner_pkg
+-DCATKIN_DEVEL_PREFIX=/home/mohammad/ros_workspace1/devel -DCMAKE_INSTALL_PREFIX=/home/mohammad/ros_workspace1/install -G Unix Makefiles
