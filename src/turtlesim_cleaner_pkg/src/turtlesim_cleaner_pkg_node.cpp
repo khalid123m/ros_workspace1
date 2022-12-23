@@ -334,6 +334,7 @@ velocity_publisher.publish(vel_msg);
 using namespace std;
 turtlesim::Pose t_pose_leader;
 turtlesim::Pose t_pose_follower;
+turtlesim::Pose t_pose_follower2;
 const double PI=3.14159265359;
 // Topic messages callback
 void poseCallback(const turtlesim::PoseConstPtr& msg_leader)
@@ -354,8 +355,19 @@ t_pose_follower.theta=msg_follower->theta;
 
 }
 
+void poseCallback3(const turtlesim::PoseConstPtr& msg_follower2)
+{
+ROS_INFO("x: %.2f, y: %.2f", msg_follower2->x, msg_follower2->y);
+t_pose_follower2.x=msg_follower2->x;
+t_pose_follower2.y=msg_follower2->y;
+t_pose_follower2.theta=msg_follower2->theta;
+
+}
+
+
 //void follower_robot(double x1,double x2,double x3,double x4);
 void follower_robot(double xf,double yf,double xl,double yl,double thetaf);
+void follower_robot2(double xf,double yf,double xl,double yl,double thetaf);
 double constrainAngle(double x);
 int main(int argc, char **argv)
 {
@@ -367,28 +379,38 @@ ros::NodeHandle node;
 ros::Publisher pub = node.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 10);
 // A publisher for the movement data for turtle2
 ros::Publisher foll = node.advertise<geometry_msgs::Twist>("turtle2/cmd_vel", 10);
+// A publisher for the movement data for turtle3
+ros::Publisher foll2 = node.advertise<geometry_msgs::Twist>("turtle3/cmd_vel", 10);
 // A listener for pose
 ros::Subscriber sub = node.subscribe("turtle1/pose", 10, poseCallback);
 // Drive forward at a given speed. The robot points up the x-axis.
 // The default constructor will set all commands to 
 ros::Subscriber sub2 = node.subscribe("turtle2/pose", 10, poseCallback2);
+
+ros::Subscriber sub3 = node.subscribe("turtle3/pose", 10, poseCallback3);
 // Drive forward at a given speed. The robot points up the x-axis.
 // The default constructor will set all commands to 
 geometry_msgs::Twist msg;
 geometry_msgs::Twist msg2;
+geometry_msgs::Twist msg3;
 //msg.linear.x = FORWARD_SPEED_MPS;
 //msg2.angular.z=0.1;
-//msg2.linear.x=1;
+//msg2.linear.x=1;rosservice call /spawn "x: 0.0
+/*y: 0.0
+theta: 0.0
+name: ''" 
+name: "turtle2"*/
 // Loop at 10Hz, publishing movement commands until we shut down
 ros::Rate rate(10);
 //ROS_INFO("Starting to move forward");
 while (ros::ok()) {
 //pub.publish(msg);
 //foll.publish(msg2);
-msg.linear.x=0.5;
-msg.angular.z=0.3;
+msg.linear.x=2;
+msg.angular.z=1;
 pub.publish(msg);
 follower_robot(t_pose_follower.x,t_pose_follower.y,t_pose_leader.x,t_pose_leader.y,t_pose_follower.theta);
+follower_robot2(t_pose_follower2.x,t_pose_follower2.y,t_pose_follower.x,t_pose_follower.y,t_pose_follower2.theta);
 //ros::spinOnce(); // Allow processing of incoming messages
 //rate.sleep();
 ros::spinOnce(); // Allow processing of incoming messages
@@ -407,6 +429,7 @@ ros::NodeHandle node;
 
     ros::Publisher pub = node.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 10);
     ros::Publisher foll = node.advertise<geometry_msgs::Twist>("turtle2/cmd_vel", 10);
+    
     geometry_msgs::Twist msg;
 geometry_msgs::Twist msg2;
    double T=0.05;
@@ -414,8 +437,10 @@ geometry_msgs::Twist msg2;
     double alpha=0.5;
     double d_offset=0;
     double R=1;
-    double k_v=0.3;
+    //double k_v=0.3;
+    double k_v=0.7;
     double ki=0.01;
+    //double kg=0.5;
     double kg=0.5;
     double L=0.381;
     double r=0.0925;
@@ -435,18 +460,60 @@ ros::Rate rate(10);
 msg2.linear.x=v;
 msg2.angular.z=w;
 
-foll.publish(msg2);
-//ros::spinOnce(); // Allow processing of incoming messages
-//rate.sleep();  
-    cout<<"this is leader robot position\n"<<t_pose_follower.y;
-    
-//ros::Rate rate(10);
-
-
-//ros::spinOnce(); // Allow processing of incoming messages
-//rate.sleep();  
-
+foll.publish(msg2); 
+cout<<"this is leader robot position\n"<<t_pose_follower.y;
 }
+
+
+//void follower_robot(double x1,double x2,double x3,double x4)
+void follower_robot2(double xf,double yf,double xl,double yl,double thetaf)
+{
+
+ros::NodeHandle node;
+
+    ros::Publisher pub = node.advertise<geometry_msgs::Twist>("turtle1/cmd_vel", 10);
+    ros::Publisher foll = node.advertise<geometry_msgs::Twist>("turtle2/cmd_vel", 10);
+    ros::Publisher foll2 = node.advertise<geometry_msgs::Twist>("turtle3/cmd_vel", 10);
+    geometry_msgs::Twist msg;
+geometry_msgs::Twist msg3;
+
+   double T=0.05;
+    double sum=0;
+    double alpha=0.5;
+    double d_offset=0;
+    double R=1;
+    double k_v=0.8;
+    double ki=0.01;
+    double kg=0.5;
+    double L=0.381;
+    double r=0.0925;
+
+double    error=sqrt(pow((xl-xf),2)+pow((yl-yf),2))+d_offset;
+    //sampling time 
+    
+    sum=sum+T*error;
+   double v=k_v*error+ki;
+   double theta_prime=atan2(yl-yf,xl-xf);
+   theta_prime=constrainAngle(theta_prime);
+   double steering_angle=kg*(theta_prime-thetaf);
+   
+   double w= (v/L)*tan(steering_angle);
+ros::Rate rate(10);
+
+msg3.linear.x=v;
+msg3.angular.z=w;
+
+foll2.publish(msg3); 
+cout<<"this is leader robot position\n"<<t_pose_follower.y;
+}
+
+
+
+
+
+
+
+
 double constrainAngle(double x){
     x = fmod(x + PI,2*PI);
     if (x < 0)
