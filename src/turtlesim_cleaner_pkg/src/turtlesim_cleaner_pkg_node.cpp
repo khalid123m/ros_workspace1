@@ -324,7 +324,7 @@ velocity_publisher.publish(vel_msg);
 //-----------------code for leader-follower starts here------------------------------------------------------------
 
 
-
+/**/
 //code below for moving two robots as of now it is a leader follower on 2 turtlesim robots
 
 #include "ros/ros.h"
