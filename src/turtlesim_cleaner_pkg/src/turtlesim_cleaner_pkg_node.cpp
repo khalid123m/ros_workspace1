@@ -393,29 +393,20 @@ ros::Subscriber sub3 = node.subscribe("turtle3/pose", 10, poseCallback3);
 geometry_msgs::Twist msg;
 geometry_msgs::Twist msg2;
 geometry_msgs::Twist msg3;
-//msg.linear.x = FORWARD_SPEED_MPS;
-//msg2.angular.z=0.1;
-//msg2.linear.x=1;rosservice call /spawn "x: 0.0
-/*y: 0.0
-theta: 0.0
-name: ''" 
-name: "turtle2"*/
+
 // Loop at 10Hz, publishing movement commands until we shut down
 ros::Rate rate(10);
 //ROS_INFO("Starting to move forward");
 while (ros::ok()) {
-//pub.publish(msg);
-//foll.publish(msg2);
+
 msg.linear.x=2;
 msg.angular.z=1;
 pub.publish(msg);
 follower_robot(t_pose_follower.x,t_pose_follower.y,t_pose_leader.x,t_pose_leader.y,t_pose_follower.theta);
 follower_robot2(t_pose_follower2.x,t_pose_follower2.y,t_pose_follower.x,t_pose_follower.y,t_pose_follower2.theta);
-//ros::spinOnce(); // Allow processing of incoming messages
-//rate.sleep();
 ros::spinOnce(); // Allow processing of incoming messages
 rate.sleep();
-//follower_robot();
+
 }
 
 

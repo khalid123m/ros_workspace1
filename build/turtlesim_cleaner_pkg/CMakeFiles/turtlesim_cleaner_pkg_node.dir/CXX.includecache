@@ -7,14 +7,14 @@
 #IncludeRegexTransform: 
 
 /home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/turtlesim_cleaner_pkg_node.cpp
-ros/ros.h
-/home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/ros/ros.h
 geometry_msgs/Twist.h
 /home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/geometry_msgs/Twist.h
 iostream
 -
 turtlesim/Pose.h
 /home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/turtlesim/Pose.h
+math.h
+-
 ros/ros.h
 /home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/ros/ros.h
 geometry_msgs/Twist.h
@@ -27,6 +27,8 @@ geometry_msgs/Twist.h
 /home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/geometry_msgs/Twist.h
 turtlesim/Pose.h
 /home/mohammad/ros_workspace1/src/turtlesim_cleaner_pkg/src/turtlesim/Pose.h
+iostream
+-
 
 /opt/ros/melodic/include/geometry_msgs/Twist.h
 string
